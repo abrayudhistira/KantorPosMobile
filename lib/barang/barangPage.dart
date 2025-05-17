@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:kantorpos/barang/barangDetailPage.dart';
 import 'package:kantorpos/barang/barangFormPage.dart';
 import 'package:kantorpos/model/barang.dart';
@@ -11,6 +12,10 @@ class BarangPage extends StatefulWidget {
 
   @override
   State<BarangPage> createState() => _BarangPageState();
+}
+
+String formatTanggalIndo(DateTime date) {
+  return DateFormat('d MMMM yyyy', 'id_ID').format(date);
 }
 
 class _BarangPageState extends State<BarangPage> {
@@ -155,7 +160,7 @@ class _BarangPageState extends State<BarangPage> {
                                       const Icon(Icons.calendar_today, size: 16, color: Colors.orange),
                                       const SizedBox(width: 8),
                                       Text(
-                                        barang.tanggalMasuk.toLocal().toString().split(' ')[0],
+                                        formatTanggalIndo(barang.tanggalMasuk),
                                         style: const TextStyle(
                                           fontSize: 12,
                                           color: Colors.black45,
