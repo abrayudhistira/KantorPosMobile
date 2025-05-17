@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kantorpos/barang/barangPage.dart';
 import 'package:kantorpos/model/saldo.dart';
 import 'package:kantorpos/service/saldoService.dart';
+import 'package:kantorpos/uangkeluar/uangKeluarPage.dart';
 import 'package:kantorpos/uangmasuk/uangMaskPage.dart';
 
 class Dashboard extends StatefulWidget {
@@ -21,6 +22,7 @@ String formatRupiah(dynamic nominal) {
 class _DashboardState extends State<Dashboard> {
   final SaldoService _saldoService = SaldoService();
   late Future<List<Saldo>> _saldoList;
+  int _selectedIndex = 2; // <-- Set index awal ke Home
 
   @override
   void initState() {
@@ -36,16 +38,22 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    int _selectedIndex = 1; // 0: Uang, 1: Home, 2: Barang
-
     void _onItemTapped(int index) {
-      if (index == 1) return; // Sudah di Dashboard
+      setState(() {
+        _selectedIndex = index;
+      });
+      if (index == 2) return; // Sudah di Dashboard (Home)
       if (index == 0) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const UangKeluarScreen()),
+        );
+      } else if (index == 1) {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const UangMasukScreen()),
         );
-      } else if (index == 2) {
+      } else if (index == 3) {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const BarangPage()),
@@ -152,6 +160,23 @@ class _DashboardState extends State<Dashboard> {
                     },
                   ),
                 ),
+                const SizedBox(height: 16),
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: ListTile(
+                    leading: const Icon(Icons.money_rounded, color: Colors.redAccent),
+                    title: const Text('Uang Keluar', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                    subtitle: const Text('Kelola Uang Keluar'),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const UangKeluarScreen()),
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
           ),
@@ -162,8 +187,12 @@ class _DashboardState extends State<Dashboard> {
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
+            icon: Icon(Icons.money_off, color: Colors.redAccent),
+            label: 'Uang Keluar',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.money_rounded),
-            label: 'Uang',
+            label: 'Uang Masuk',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

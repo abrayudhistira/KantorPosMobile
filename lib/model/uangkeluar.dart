@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:intl/intl.dart';
+
 List<UangKeluar> uangKeluarFromJson(String str) => List<UangKeluar>.from(json.decode(str).map((x) => UangKeluar.fromJson(x)));
 
 String uangKeluarToJson(List<UangKeluar> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
@@ -30,7 +32,7 @@ class UangKeluar {
     Map<String, dynamic> toJson() => {
         "id": id,
         "nominalkeluar": nominalkeluar,
-        "tanggalkeluar": tanggalkeluar.toIso8601String(),
+        "tanggalkeluar": DateFormat('yyyy-MM-dd').format(tanggalkeluar),
         "tujuan": tujuan,
         "keterangan": keterangan,
     };
