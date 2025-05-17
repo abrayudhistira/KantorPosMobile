@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kantorpos/barang/barangPage.dart';
 import 'package:kantorpos/model/saldo.dart';
 import 'package:kantorpos/service/saldoService.dart';
+import 'package:kantorpos/uangmasuk/uangMaskPage.dart';
 
 class Dashboard extends StatefulWidget {
   final String username;
@@ -92,7 +93,7 @@ class _DashboardState extends State<Dashboard> {
                             formatRupiah(latest.nominalakhir),
                             style: const TextStyle(fontSize: 14),
                           ),
-                          onTap: () => _loadSaldo(),
+                          //onTap: () => _loadSaldo(),
                         );
                       },
                     ),
@@ -112,6 +113,24 @@ class _DashboardState extends State<Dashboard> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => const BarangPage()),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Card Barang
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: ListTile(
+                    leading: const Icon(Icons.money_rounded, color: Colors.blueAccent),
+                    title: const Text('Uang Masuk', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                    subtitle: const Text('Kelola Uang Masuk'),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const UangMasukScreen()),
                       );
                     },
                   ),

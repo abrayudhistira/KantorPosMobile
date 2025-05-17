@@ -1,33 +1,42 @@
 import 'dart:convert';
 
-List<UangMasuk> uangMasukFromJson(String str) => List<UangMasuk>.from(json.decode(str).map((x) => UangMasuk.fromJson(x)));
+import 'package:intl/intl.dart';
 
-String uangMasukToJson(List<UangMasuk> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+List<UangMasuk> uangMasukFromJson(String str) =>
+    List<UangMasuk>.from(json.decode(str).map((x) => UangMasuk.fromJson(x)));
+
+String uangMasukToJson(List<UangMasuk> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class UangMasuk {
-    int id;
-    String nominal;
-    DateTime tanggal;
-    String keterangan;
+  UangMasuk({
+    required this.id,
+    required this.nominal,
+    required this.tanggal,
+    required this.keterangan,
+  });
 
-    UangMasuk({
-        required this.id,
-        required this.nominal,
-        required this.tanggal,
-        required this.keterangan,
-    });
+  final int id;
+  final String nominal;
+  final DateTime tanggal;
+  final String keterangan;
 
-    factory UangMasuk.fromJson(Map<String, dynamic> json) => UangMasuk(
-        id: json["id"],
-        nominal: json["nominal"],
-        tanggal: DateTime.parse(json["tanggal"]),
-        keterangan: json["status"],
+  factory UangMasuk.fromJson(Map<String, dynamic> json) {
+    return UangMasuk(
+      id: json["id"] is int 
+          ? json["id"] 
+          : int.tryParse(json["id"]?.toString() ?? '0') ?? 0,
+      nominal: json["nominal"]?.toString() ?? '0',
+      tanggal: DateTime.tryParse(json["tanggal"]?.toString() ?? '') 
+          ?? DateTime.now(),
+      keterangan: json["keterangan"]?.toString() ?? '',
     );
+  }
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "nominal": nominal,
-        "tanggal": tanggal.toIso8601String(),
-        "status": keterangan,
-    };
+        "tanggal": DateFormat('yyyy-MM-dd').format(tanggal),
+        "keterangan": keterangan,
+      };
 }
