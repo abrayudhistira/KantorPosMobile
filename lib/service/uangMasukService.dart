@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:kantorpos/model/uangmasuk.dart';
 
 class UangMasukService {
-  static const _baseUrl = 'https://aa1f-103-3-222-72.ngrok-free.app';
+  static const _baseUrl = 'https://8f60-2405-5fc0-7-1-3c0d-e012-e09c-8c2a.ngrok-free.app';
 
   Future<List<UangMasuk>> fetchAll() async {
     final uri = Uri.parse('$_baseUrl/uangmasuk');

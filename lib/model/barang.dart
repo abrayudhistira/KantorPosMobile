@@ -28,13 +28,13 @@ class Barang {
     });
 
     factory Barang.fromJson(Map<String, dynamic> json) => Barang(
-        id: json["id"],
-        namaBarang: json["nama_barang"],
-        jenisBarang: json["jenis_barang"],
-        tanggalMasuk: DateTime.parse(json["tanggal_masuk"]),
-        asalbarang: json["asalbarang"],
-        namaasalbarang: json["namaasalbarang"],
-        foto: json["foto"],
+        id: json['id'] is int ? json['id'] : int.tryParse(json['id'].toString()) ?? 0,
+        namaBarang: json['nama_barang'] ?? '',
+        jenisBarang: json['jenis_barang'] ?? '',
+        tanggalMasuk: DateTime.tryParse(json['tanggal_masuk'] ?? '') ?? DateTime.now(),
+        asalbarang: json['asalbarang'] ?? '',
+        namaasalbarang: json['namaasalbarang'] ?? '',
+        foto: json['foto'] ?? '',
     );
 
     Map<String, dynamic> toJson() => {

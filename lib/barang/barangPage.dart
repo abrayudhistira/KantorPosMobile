@@ -189,8 +189,8 @@ class _BarangPageState extends State<BarangPage> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
                                 child: barang.foto.isNotEmpty
-                                    ? Image.file(
-                                        File(barang.foto),
+                                    ? Image.network(
+                                        'https://8f60-2405-5fc0-7-1-3c0d-e012-e09c-8c2a.ngrok-free.app/${barang.foto}',
                                         width: 64,
                                         height: 64,
                                         fit: BoxFit.cover,

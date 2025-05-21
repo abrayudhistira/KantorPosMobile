@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:kantorpos/model/barang.dart';
 
 class BarangService {
-  static const _baseUrl = 'https://aa1f-103-3-222-72.ngrok-free.app';
+  static const _baseUrl = 'https://8f60-2405-5fc0-7-1-3c0d-e012-e09c-8c2a.ngrok-free.app';
 
   Future<List<Barang>> fetchAll() async {
     final uri = Uri.parse('$_baseUrl/barang');
@@ -16,20 +16,48 @@ class BarangService {
     }
   }
 
-  Future<Barang> createBarang(Barang barang) async {
-    final url = Uri.parse('$_baseUrl/barangadd');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(barang.toJson()),
-    );
-    print('Status code: ${response.statusCode}');
-    print('Response body: ${response.body}');
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      // Jika backend tidak mengembalikan data barang, cukup return barang yang dikirim
-      return barang;
-    } else {
-      throw Exception('Failed to create barang');
+  // Future<Barang> createBarang(Barang barang) async {
+  //   final url = Uri.parse('$_baseUrl/barangadd');
+  //   final response = await http.post(
+  //     url,
+  //     headers: {'Content-Type': 'application/json'},
+  //     body: jsonEncode(barang.toJson()),
+  //   );
+  //   print('Status code: ${response.statusCode}');
+  //   print('Response body: ${response.body}');
+  //   if (response.statusCode == 200 || response.statusCode == 201) {
+  //     // Jika backend tidak mengembalikan data barang, cukup return barang yang dikirim
+  //     return barang;
+  //   } else {
+  //     throw Exception('Failed to create barang');
+  //   }
+  // }
+
+  Future<void> createBarang(Barang barang) async {
+    //var uri = Uri.parse('https://8f60-2405-5fc0-7-1-3c0d-e012-e09c-8c2a.ngrok-free.app/barangadd');
+    final uri = Uri.parse('$_baseUrl/barangadd');
+    var request = http.MultipartRequest('POST', uri);
+
+    // Tambahkan field form
+    request.fields['nama_barang'] = barang.namaBarang;
+    request.fields['jenis_barang'] = barang.jenisBarang;
+    request.fields['tanggal_masuk'] = barang.tanggalMasuk.toIso8601String().split('T')[0];
+    request.fields['asalbarang'] = barang.asalbarang;
+    request.fields['namaasalbarang'] = barang.namaasalbarang;
+
+    // Tambahkan file foto jika ada
+    if (barang.foto.isNotEmpty) {
+      request.files.add(await http.MultipartFile.fromPath(
+        'foto',
+        barang.foto,
+        filename: barang.foto.split('/').last,
+      ));
+    }
+
+    var response = await request.send();
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Gagal menambah barang');
     }
   }
 

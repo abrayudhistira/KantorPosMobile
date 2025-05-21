@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../model/user.dart';
 
 class AuthService {
-  static const String baseUrl = 'https://aa1f-103-3-222-72.ngrok-free.app'; // Ganti sesuai backend Anda
+  static const String baseUrl = 'https://8f60-2405-5fc0-7-1-3c0d-e012-e09c-8c2a.ngrok-free.app'; // Ganti sesuai backend Anda
 
   static Future<User?> login(String username, String password) async {
     final response = await http.post(
