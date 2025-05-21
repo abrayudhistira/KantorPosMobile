@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kantorpos/dashboard/dashboard.dart';
 import 'package:kantorpos/model/uangmasuk.dart';
 import 'package:kantorpos/service/uangMasukService.dart';
 
+class AppTheme {
+  static const Color primaryColor = Color(0xFFDD9F52);
+  static const Color secondaryColor = Color(0xFFDCC894);
+  static const Color accentColor = Color(0xFF2C586E);
+  static const Color lightAccentColor = Color(0xFF8DA1AF);
+  static const Color textPrimaryColor = Color(0xFF333333);
+  static const Color textSecondaryColor = Color(0xFF666666);
+  static const Color white = Colors.white;
+}
+
 class UangMasukScreen extends StatefulWidget {
-  const UangMasukScreen({super.key});
+  final String username;
+  const UangMasukScreen({super.key, required this.username});
 
   @override
   State<UangMasukScreen> createState() => _UangMasukScreenState();
@@ -66,7 +78,7 @@ class _UangMasukScreenState extends State<UangMasukScreen> {
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
         ),
         padding: EdgeInsets.only(
@@ -82,7 +94,7 @@ class _UangMasukScreenState extends State<UangMasukScreen> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: AppTheme.textSecondaryColor.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(2)),
             ),
             const SizedBox(height: 16),
@@ -91,7 +103,7 @@ class _UangMasukScreenState extends State<UangMasukScreen> {
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.green),
+                color: AppTheme.accentColor),
             ),
             const SizedBox(height: 24),
             _buildInputField(
@@ -116,7 +128,7 @@ class _UangMasukScreenState extends State<UangMasukScreen> {
               height: 50,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: AppTheme.accentColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
                 ),
@@ -124,7 +136,7 @@ class _UangMasukScreenState extends State<UangMasukScreen> {
                 child: Text(
                   isEdit ? 'SIMPAN PERUBAHAN' : 'TAMBAH TRANSAKSI',
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: AppTheme.white,
                     fontWeight: FontWeight.bold),
                 ),
               ),
@@ -149,16 +161,21 @@ class _UangMasukScreenState extends State<UangMasukScreen> {
       decoration: InputDecoration(
         labelText: label,
         prefixText: prefix,
-        prefixIcon: icon != null ? Icon(icon, color: Colors.green) : null,
+        labelStyle: const TextStyle(color: AppTheme.textSecondaryColor),
+        prefixIcon: icon != null ? Icon(icon, color: AppTheme.accentColor) : null,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.grey)),
+          borderSide: const BorderSide(color: AppTheme.textSecondaryColor)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.green)),
+          borderSide: const BorderSide(color: AppTheme.accentColor, width: 2)),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppTheme.textSecondaryColor.withOpacity(0.5))),
       ),
       keyboardType: keyboardType,
       maxLines: maxLines,
+      style: const TextStyle(color: AppTheme.textPrimaryColor),
     );
   }
 
@@ -173,9 +190,12 @@ class _UangMasukScreenState extends State<UangMasukScreen> {
           builder: (context, child) => Theme(
             data: ThemeData.light().copyWith(
               colorScheme: const ColorScheme.light(
-                primary: Colors.green,
-                onPrimary: Colors.white,
+                primary: AppTheme.accentColor,
+                onPrimary: AppTheme.white,
+                surface: AppTheme.white,
+                onSurface: AppTheme.textPrimaryColor,
               ),
+              dialogBackgroundColor: AppTheme.white,
             ),
             child: child!,
           ),
@@ -187,15 +207,22 @@ class _UangMasukScreenState extends State<UangMasukScreen> {
       child: InputDecorator(
         decoration: InputDecoration(
           labelText: 'Tanggal',
-          prefixIcon: const Icon(Icons.calendar_today, color: Colors.green),
+          labelStyle: const TextStyle(color: AppTheme.textSecondaryColor),
+          prefixIcon: const Icon(Icons.calendar_today, color: AppTheme.accentColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12)),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: AppTheme.textSecondaryColor.withOpacity(0.5))),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(DateFormat('dd MMM yyyy').format(_selectedDate)),
-            const Icon(Icons.arrow_drop_down, color: Colors.grey),
+            Text(
+              DateFormat('dd MMM yyyy').format(_selectedDate),
+              style: const TextStyle(color: AppTheme.textPrimaryColor)
+            ),
+            const Icon(Icons.arrow_drop_down, color: AppTheme.lightAccentColor),
           ],
         ),
       ),
@@ -236,32 +263,41 @@ class _UangMasukScreenState extends State<UangMasukScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.lightAccentColor,
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => Dashboard(username: widget.username)),
+            );
+          },
+        ),
         title: const Text('Catatan Uang Masuk',
-            style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.white,
+            style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.white)),
+        backgroundColor: AppTheme.accentColor,
         elevation: 0,
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.white,
+        backgroundColor: AppTheme.accentColor,
+        foregroundColor: AppTheme.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16)),
         onPressed: () => _showForm(),
         child: const Icon(Icons.add),
       ),
       body: RefreshIndicator(
-        color: Colors.green,
-        backgroundColor: Colors.white,
+        color: AppTheme.accentColor,
+        backgroundColor: AppTheme.white,
         onRefresh: _fetchData,
         child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator(color: AppTheme.accentColor))
             : _uangMasukList.isEmpty
                 ? _buildEmptyState()
                 : Column(
                     children: [
-                      //_buildTotalHeader(),
+                     // _buildTotalHeader(),
                       Expanded(child: _buildTransactionList()),
                     ],
                   ),
@@ -274,12 +310,12 @@ class _UangMasukScreenState extends State<UangMasukScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset('assets/empty.png', height: 200),
+          Image.asset('assets/images/logokantorpos.png', height: 200),
           const Text('Belum ada transaksi',
-              style: TextStyle(fontSize: 18, color: Colors.grey)),
+              style: TextStyle(fontSize: 18, color: AppTheme.textSecondaryColor)),
           const SizedBox(height: 8),
           const Text('Tap + untuk menambahkan transaksi baru',
-              style: TextStyle(color: Colors.grey)),
+              style: TextStyle(color: AppTheme.textSecondaryColor)),
         ],
       ),
     );
@@ -292,17 +328,17 @@ class _UangMasukScreenState extends State<UangMasukScreen> {
   //   return Container(
   //     padding: const EdgeInsets.all(16),
   //     decoration: const BoxDecoration(
-  //       color: Colors.green,
+  //       color: AppTheme.primaryColor,
   //       borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
   //     ),
   //     child: Column(
   //       children: [
   //         const Text('Total Uang Masuk',
-  //             style: TextStyle(color: Colors.white, fontSize: 16)),
+  //             style: TextStyle(color: AppTheme.white, fontSize: 16)),
   //         const SizedBox(height: 8),
   //         Text(_currencyFormat.format(total),
   //             style: const TextStyle(
-  //               color: Colors.white,
+  //               color: AppTheme.white,
   //               fontSize: 28,
   //               fontWeight: FontWeight.bold)),
   //       ],
@@ -321,44 +357,53 @@ class _UangMasukScreenState extends State<UangMasukScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12)),
           elevation: 2,
+          color: AppTheme.white,
           child: ListTile(
             contentPadding: const EdgeInsets.all(16),
             leading: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.1),
+                color: AppTheme.accentColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8)),
               child: const Icon(Icons.arrow_downward, 
-                color: Colors.green)),
-            title: Text(_currencyFormat.format(double.parse(transaction.nominal))),
+                color: AppTheme.accentColor)),
+            title: Text(
+              _currencyFormat.format(double.parse(transaction.nominal)),
+              style: const TextStyle(
+                color: AppTheme.textPrimaryColor,
+                fontWeight: FontWeight.bold
+              ),
+            ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 4),
-                Text(transaction.keterangan,
-                    style: const TextStyle(color: Colors.grey)),
+                Text(
+                  transaction.keterangan,
+                  style: const TextStyle(color: AppTheme.textSecondaryColor)
+                ),
                 const SizedBox(height: 4),
                 Text(
                   DateFormat('dd MMM yyyy').format(transaction.tanggal),
-                  style: TextStyle(
-                    color: Colors.grey[600],
+                  style: const TextStyle(
+                    color: AppTheme.lightAccentColor,
                     fontSize: 12)),
               ],
             ),
             trailing: PopupMenuButton(
-              icon: const Icon(Icons.more_vert),
+              icon: const Icon(Icons.more_vert, color: AppTheme.lightAccentColor),
               itemBuilder: (context) => [
                 const PopupMenuItem(
                   value: 'edit',
                   child: ListTile(
-                    leading: Icon(Icons.edit, color: Colors.green),
-                    title: Text('Edit')),
+                    leading: Icon(Icons.edit, color: AppTheme.accentColor),
+                    title: Text('Edit', style: TextStyle(color: AppTheme.textPrimaryColor))),
                 ),
                 const PopupMenuItem(
                   value: 'delete',
                   child: ListTile(
                     leading: Icon(Icons.delete, color: Colors.red),
-                    title: Text('Hapus')),
+                    title: Text('Hapus', style: TextStyle(color: AppTheme.textPrimaryColor))),
                 ),
               ],
               onSelected: (value) {
@@ -379,12 +424,17 @@ class _UangMasukScreenState extends State<UangMasukScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Hapus Transaksi'),
-        content: const Text('Apakah anda yakin ingin menghapus transaksi ini?'),
+        backgroundColor: AppTheme.white,
+        title: const Text('Hapus Transaksi', 
+            style: TextStyle(color: AppTheme.textPrimaryColor)),
+        content: const Text('Apakah anda yakin ingin menghapus transaksi ini?',
+            style: TextStyle(color: AppTheme.textSecondaryColor)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Batal')),
+            child: const Text('Batal', 
+                style: TextStyle(color: AppTheme.lightAccentColor))),
           TextButton(
             onPressed: () async {
               try {
@@ -411,7 +461,7 @@ class _UangMasukScreenState extends State<UangMasukScreen> {
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8)),
-        backgroundColor: Colors.green,
+        backgroundColor: AppTheme.accentColor,
       ),
     );
   }

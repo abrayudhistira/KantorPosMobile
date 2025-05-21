@@ -4,6 +4,16 @@ import 'package:kantorpos/model/barang.dart';
 import 'package:kantorpos/service/barangService.dart';
 import 'package:image_picker/image_picker.dart';
 
+class AppTheme {
+  static const Color primaryColor = Color(0xFFDD9F52);
+  static const Color secondaryColor = Color(0xFFDCC894);
+  static const Color accentColor = Color(0xFF2C586E);
+  static const Color lightAccentColor = Color(0xFF8DA1AF);
+  static const Color textPrimaryColor = Color(0xFF333333);
+  static const Color textSecondaryColor = Color(0xFF666666);
+  static const Color white = Colors.white;
+}
+
 class BarangFormPage extends StatefulWidget {
   final BarangService barangService;
   final Barang? barang;
@@ -35,7 +45,7 @@ class _BarangFormPageState extends State<BarangFormPage> {
     _jenisBarangController = TextEditingController(text: b?.jenisBarang ?? '');
     _asalBarangController = TextEditingController(text: b?.asalbarang ?? '');
     _namaAsalBarangController = TextEditingController(text: b?.namaasalbarang ?? '');
-    _tanggalMasuk = b?.tanggalMasuk;
+    _tanggalMasuk = b?.tanggalMasuk ?? DateTime.now();
     if (b?.foto != null && b!.foto.isNotEmpty) {
       _fotoFile = File(b.foto);
     }
@@ -74,48 +84,49 @@ class _BarangFormPageState extends State<BarangFormPage> {
     try {
       if (widget.barang == null) {
         await widget.barangService.createBarang(barang);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Barang berhasil ditambahkan'),
-            backgroundColor: Colors.green[600],
-          ),
-        );
+        _showSnackbar('Barang berhasil ditambahkan');
       } else {
         await widget.barangService.updateBarang(barang);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Barang berhasil diperbarui'),
-            backgroundColor: Colors.blue[600],
-          ),
-        );
+        _showSnackbar('Barang berhasil diperbarui');
       }
       Navigator.pop(context, true);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Gagal menyimpan barang: \$e'),
-          backgroundColor: Colors.red[600],
-        ),
-      );
+      _showSnackbar('Gagal menyimpan barang: $e');
     }
+  }
+
+  void _showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        backgroundColor: AppTheme.accentColor,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.barang != null;
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: AppTheme.lightAccentColor,
       appBar: AppBar(
-        title: Text(isEditing ? 'Edit Barang' : 'Tambah Barang'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
-        elevation: 1,
+        title: Text(
+          isEditing ? 'Edit Barang' : 'Tambah Barang',
+          style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.white),
+        ),
+        backgroundColor: AppTheme.accentColor,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 4,
+          color: AppTheme.white,
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Form(
@@ -130,9 +141,11 @@ class _BarangFormPageState extends State<BarangFormPage> {
                       children: [
                         CircleAvatar(
                           radius: 50,
-                          backgroundColor: Colors.grey[200],
+                          backgroundColor: AppTheme.accentColor.withOpacity(0.1),
                           backgroundImage: _fotoFile != null ? FileImage(_fotoFile!) : null,
-                          child: _fotoFile == null ? Icon(Icons.photo, size: 40, color: Colors.grey[600]) : null,
+                          child: _fotoFile == null 
+                              ? const Icon(Icons.photo, size: 40, color: AppTheme.lightAccentColor) 
+                              : null,
                         ),
                         Positioned(
                           bottom: 0,
@@ -142,20 +155,20 @@ class _BarangFormPageState extends State<BarangFormPage> {
                               InkWell(
                                 onTap: () => _pickImage(ImageSource.camera),
                                 borderRadius: BorderRadius.circular(24),
-                                child: CircleAvatar(
+                                child: const CircleAvatar(
                                   radius: 16,
-                                  backgroundColor: Colors.orange,
-                                  child: Icon(Icons.photo_camera, size: 16, color: Colors.white),
+                                  backgroundColor: AppTheme.accentColor,
+                                  child: Icon(Icons.photo_camera, size: 16, color: AppTheme.white),
                                 ),
                               ),
                               const SizedBox(width: 8),
                               InkWell(
                                 onTap: () => _pickImage(ImageSource.gallery),
                                 borderRadius: BorderRadius.circular(24),
-                                child: CircleAvatar(
+                                child: const CircleAvatar(
                                   radius: 16,
-                                  backgroundColor: Colors.orange,
-                                  child: Icon(Icons.photo_library, size: 16, color: Colors.white),
+                                  backgroundColor: AppTheme.accentColor,
+                                  child: Icon(Icons.photo_library, size: 16, color: AppTheme.white),
                                 ),
                               ),
                             ],
@@ -166,86 +179,58 @@ class _BarangFormPageState extends State<BarangFormPage> {
                   ),
                   const SizedBox(height: 24),
                   // Nama Barang
-                  TextFormField(
+                  _buildInputField(
                     controller: _namaBarangController,
-                    decoration: InputDecoration(
-                      labelText: 'Nama Barang',
-                      prefixIcon: Icon(Icons.label, color: Colors.orange),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                    ),
+                    label: 'Nama Barang',
+                    icon: Icons.label,
                     validator: (v) => v == null || v.isEmpty ? 'Nama barang harus diisi' : null,
                   ),
                   const SizedBox(height: 16),
                   // Jenis Barang
-                  TextFormField(
+                  _buildInputField(
                     controller: _jenisBarangController,
-                    decoration: InputDecoration(
-                      labelText: 'Jenis Barang',
-                      prefixIcon: Icon(Icons.category, color: Colors.orange),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                    ),
+                    label: 'Jenis Barang',
+                    icon: Icons.category,
                     validator: (v) => v == null || v.isEmpty ? 'Jenis barang harus diisi' : null,
                   ),
                   const SizedBox(height: 16),
                   // Asal Barang
-                  TextFormField(
+                  _buildInputField(
                     controller: _asalBarangController,
-                    decoration: InputDecoration(
-                      labelText: 'Asal Barang',
-                      prefixIcon: Icon(Icons.location_on, color: Colors.orange),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                    ),
+                    label: 'Asal Barang',
+                    icon: Icons.location_on,
                     validator: (v) => v == null || v.isEmpty ? 'Asal barang harus diisi' : null,
                   ),
                   const SizedBox(height: 16),
                   // Nama Asal Barang
-                  TextFormField(
+                  _buildInputField(
                     controller: _namaAsalBarangController,
-                    decoration: InputDecoration(
-                      labelText: 'Nama Asal Barang',
-                      prefixIcon: Icon(Icons.person, color: Colors.orange),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                    ),
+                    label: 'Nama Asal Barang',
+                    icon: Icons.person,
                     validator: (v) => v == null || v.isEmpty ? 'Nama asal barang harus diisi' : null,
                   ),
                   const SizedBox(height: 16),
                   // Tanggal Masuk
-                  GestureDetector(
-                    onTap: () async {
-                      final picked = await showDatePicker(
-                        context: context,
-                        initialDate: _tanggalMasuk ?? DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime.now(),
-                      );
-                      if (picked != null) setState(() => _tanggalMasuk = picked);
-                    },
-                    child: InputDecorator(
-                      decoration: InputDecoration(
-                        labelText: 'Tanggal Masuk',
-                        prefixIcon: Icon(Icons.calendar_today, color: Colors.orange),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                      ),
-                      child: Text(
-                        _tanggalMasuk != null
-                            ? _tanggalMasuk!.toLocal().toString().split(' ')[0]
-                            : 'Pilih tanggal',
-                        style: TextStyle(fontSize: 16, color: _tanggalMasuk == null ? Colors.grey[600] : Colors.black87),
-                      ),
-                    ),
-                  ),
+                  _buildDatePicker(context),
                   const SizedBox(height: 32),
                   // Tombol Simpan
                   SizedBox(
                     height: 50,
                     child: ElevatedButton.icon(
                       onPressed: _saveBarang,
-                      icon: Icon(Icons.save),
-                      label: Text('Simpan'),
+                      icon: const Icon(Icons.save),
+                      label: Text(
+                        isEditing ? 'SIMPAN PERUBAHAN' : 'TAMBAH BARANG',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                        textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        backgroundColor: AppTheme.accentColor,
+                        foregroundColor: AppTheme.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                   ),
@@ -253,6 +238,98 @@ class _BarangFormPageState extends State<BarangFormPage> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInputField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    String? Function(String?)? validator,
+    TextInputType? keyboardType,
+    int? maxLines = 1,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      maxLines: maxLines,
+      style: const TextStyle(color: AppTheme.textPrimaryColor),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: AppTheme.textSecondaryColor),
+        prefixIcon: Icon(icon, color: AppTheme.accentColor),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppTheme.textSecondaryColor),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppTheme.accentColor, width: 2),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppTheme.textSecondaryColor.withOpacity(0.5)),
+        ),
+      ),
+      validator: validator,
+    );
+  }
+
+  Widget _buildDatePicker(BuildContext context) {
+    return InkWell(
+      onTap: () async {
+        final DateTime? picked = await showDatePicker(
+          context: context,
+          initialDate: _tanggalMasuk ?? DateTime.now(),
+          firstDate: DateTime(2000),
+          lastDate: DateTime.now(),
+          builder: (context, child) => Theme(
+            data: ThemeData.light().copyWith(
+              colorScheme: const ColorScheme.light(
+                primary: AppTheme.accentColor,
+                onPrimary: AppTheme.white,
+                surface: AppTheme.white,
+                onSurface: AppTheme.textPrimaryColor,
+              ),
+              dialogBackgroundColor: AppTheme.white,
+            ),
+            child: child!,
+          ),
+        );
+        if (picked != null) {
+          setState(() => _tanggalMasuk = picked);
+        }
+      },
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: 'Tanggal Masuk',
+          labelStyle: const TextStyle(color: AppTheme.textSecondaryColor),
+          prefixIcon: const Icon(Icons.calendar_today, color: AppTheme.accentColor),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: AppTheme.textSecondaryColor.withOpacity(0.5)),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              _tanggalMasuk != null
+                  ? _tanggalMasuk!.toLocal().toString().split(' ')[0]
+                  : 'Pilih tanggal',
+              style: TextStyle(
+                color: _tanggalMasuk == null 
+                    ? AppTheme.textSecondaryColor 
+                    : AppTheme.textPrimaryColor,
+              ),
+            ),
+            const Icon(Icons.arrow_drop_down, color: AppTheme.lightAccentColor),
+          ],
         ),
       ),
     );

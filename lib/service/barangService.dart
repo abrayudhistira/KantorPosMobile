@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:kantorpos/model/barang.dart';
 
 class BarangService {
-  static const _baseUrl = 'https://14a4-139-192-222-221.ngrok-free.app';
+  static const _baseUrl = 'https://aa1f-103-3-222-72.ngrok-free.app';
 
   Future<List<Barang>> fetchAll() async {
     final uri = Uri.parse('$_baseUrl/barang');

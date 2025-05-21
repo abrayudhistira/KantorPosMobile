@@ -5,7 +5,7 @@ import 'package:kantorpos/model/saldo.dart';
 // Ensure that the file 'lib/model/saldo.dart' exists and contains a class named 'Saldo'
 
 class SaldoService {
-  static const _saldoUrl = 'https://14a4-139-192-222-221.ngrok-free.app';
+  static const _saldoUrl = 'https://aa1f-103-3-222-72.ngrok-free.app';
 
   Future<List<Saldo>> fetchAll() async {
     final uri = Uri.parse('$_saldoUrl/saldo');
