@@ -77,12 +77,23 @@ class BarangService {
     }
   }
 
-  Future<void> deleteBarang(String id) async {
-    final url = Uri.parse('$_baseUrl/barang/$id');
-    final response = await http.delete(url);
+  // Future<void> deleteBarang(String id) async {
+  //   final url = Uri.parse('$_baseUrl/barang/$id');
+  //   final response = await http.delete(url);
 
-    if (response.statusCode != 200) {
-      throw Exception('Failed to delete barang');
-    }
+  //   if (response.statusCode != 200) {
+  //     throw Exception('Failed to delete barang');
+  //   }
+  // }
+  Future<void> deleteBarang(String id) async {
+  final url = Uri.parse('$_baseUrl/barang/$id');
+  print('[DEBUG] Delete Barang URL: $url');
+  final response = await http.delete(url);
+  print('[DEBUG] Delete Barang Status: ${response.statusCode}');
+  print('[DEBUG] Delete Barang Body: ${response.body}');
+
+  if (response.statusCode != 200) {
+    throw Exception('Failed to delete barang');
   }
+}
 }

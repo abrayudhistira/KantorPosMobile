@@ -47,6 +47,7 @@ class _BarangPageState extends State<BarangPage> {
   }
 
   Future<void> _deleteBarang(String id) async {
+    print('[DEBUG] Akan hapus barang dengan id: $id');
     try {
       await barangService.deleteBarang(id);
       ScaffoldMessenger.of(context).showSnackBar(
